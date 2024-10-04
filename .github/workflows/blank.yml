@@ -1,0 +1,66 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class InventoryApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Inventory Management")
+        
+        self.inventory = {}  # Dictionary to store items
+
+        # Labels and entry fields for item details
+        tk.Label(root, text="Item Name:").grid(row=0, column=0)
+        self.item_name = tk.Entry(root)
+        self.item_name.grid(row=0, column=1)
+
+        tk.Label(root, text="Category:").grid(row=1, column=0)
+        self.category = tk.Entry(root)
+        self.category.grid(row=1, column=1)
+
+        tk.Label(root, text="Quantity:").grid(row=2, column=0)
+        self.quantity = tk.Entry(root)
+        self.quantity.grid(row=2, column=1)
+
+        tk.Label(root, text="Price:").grid(row=3, column=0)
+        self.price = tk.Entry(root)
+        self.price.grid(row=3, column=1)
+
+        # Buttons to add and view items
+        tk.Button(root, text="Add Item", command=self.add_item).grid(row=4, column=0, pady=10)
+        tk.Button(root, text="View Inventory", command=self.view_inventory).grid(row=4, column=1, pady=10)
+
+    def add_item(self):
+        name = self.item_name.get()
+        category = self.category.get()
+        quantity = self.quantity.get()
+        price = self.price.get()
+
+        if name and category and quantity.isdigit() and price.replace('.', '', 1).isdigit():
+            self.inventory[name] = {
+                'category': category,
+                'quantity': int(quantity),
+                'price': float(price)
+            }
+            messagebox.showinfo("Success", f"Item '{name}' added to inventory.")
+            self.clear_fields()
+        else:
+            messagebox.showerror("Error", "Please enter valid item details.")
+
+    def view_inventory(self):
+        inventory_window = tk.Toplevel(self.root)
+        inventory_window.title("Current Inventory")
+        
+        row = 0
+        for name, details in self.inventory.items():
+            tk.Label(inventory_window, text=f"Name: {name}, Category: {details['category']}, Quantity: {details['quantity']}, Price: ${details['price']:.2f}").grid(row=row, column=0, sticky='w')
+            row += 1
+
+    def clear_fields(self):
+        self.item_name.delete(0, tk.END)
+        self.category.delete(0, tk.END)
+        self.quantity.delete(0, tk.END)
+        self.price.delete(0, tk.END)
+
+root = tk.Tk()
+app = InventoryApp(root)
+root.mainloop()
